@@ -33,27 +33,27 @@ WHERE leto_rojstva>1980;
 -- Izpišite vse podatke o študentkah z imenom Cvetka, ki so starejše od 50 let.
 SELECT *
 FROM student
-WHERE ime='Cvetka' AND 2025-leto_rojstva > 50;
+WHERE ime='Cvetka' AND YEAR(CURDATE()) - leto_rojstva > 50;
 
 -- Izpišite imena in priimke vseh študentov, ki so rojeni med 1970 in 1980.
 SELECT ime, priimek
 FROM student
-WHERE leto_rojstva > 1970 AND leto_rojstva < 1980;
+WHERE leto_rojstva BETWEEN 1970 AND  1980;
 
 -- Izpišite vse podatke o študentih, ki so rojeni v letih 1970, 1980, 1990 in 2000.
 SELECT *
 FROM student
-WHERE leto_rojstva=1970 OR leto_rojstva=1980 OR leto_rojstva=1990 OR leto_rojstva=2000;
+WHERE leto_rojstva IN (1970,1980,1990,2000);
 
 -- Izpišite vse podatke o študentih, ki niso rojeni v letih 1970, 1980, 1990 in 2000.
 SELECT *
 FROM student
-WHERE NOT (leto_rojstva=1970 OR leto_rojstva=1980 OR leto_rojstva=1990 OR leto_rojstva=2000);
+WHERE leto_rojstva NOT IN (1970,1980,1990,2000);
 
 -- Izpišite vse podatke o študentih, ki so rojeni ali 1998 ali 2000.
 SELECT *
 FROM student
-WHERE leto_rojstva = 1998 OR leto_rojstva = 2000;
+WHERE leto_rojstva IN (1998,2000);
 
 -- Ali obstaja študentka Tia Kolar rojena 1999?
 SELECT *
