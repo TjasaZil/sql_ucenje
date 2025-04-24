@@ -2,3 +2,5 @@ https://www.codechef.com/practice/sql-case-studies-topic-wise
 https://learnsql.com/blog/sql-server-practice-exercises/
 https://sqlzoo.net/wiki/SQL_Tutorial
 https://www.w3resource.com/sql-exercises/#google_vignette
+https://sqlbolt.com/lesson/select_queries_introduction
+https://www.sql-practice.com/
