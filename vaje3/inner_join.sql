@@ -114,13 +114,13 @@ WHERE a.name = 'Tom Cruise' AND c.actorid = a.actorId AND c.movieid = m.movieid;
 -- Poišči igralce, ki so igrali v vsaj 3 filmih iz žanra "Drama", kjer so filmi imeli povprečno oceno (rating) več kot 7.5 in skupen zaslužek (gross - budget) več kot 10 milijonov. 
 -- Prikaži ime igralca, število teh filmov, povprečno oceno teh filmov ter skupen zaslužek. Rezultate razvrsti po skupnem zaslužku.
 
-SELECT a.name, g.name, m.rating, gross - budget as net
+SELECT a.name, g.name, m.rating, SUM(m.gross) as net
 FROM movies m
 INNER JOIN characters c ON c.movieid = m.movieid
 INNER JOIN actors a ON a.actorid = c.actorid
 INNER JOIN genres g ON g.genre_id = m.genre_id
 GROUP BY a.name, g.name
-HAVING g.name = 'Drama' AND COUNT(g.name) > 3 AND m.rating > 7.5 AND net > 10000000
+HAVING g.name = 'Drama' AND COUNT(g.name) > 2 AND m.rating > 7.5 AND net > 10000000
 ORDER BY net;
 
 -- mislim da noben tak igralec ne obstaja, zato vrne null
