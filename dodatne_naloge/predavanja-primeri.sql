@@ -62,74 +62,141 @@ INSERT INTO Rezervacija (jid, cid, dan) VALUES
 
 -- VAJE
 
--- izpiši vse podatke iz tabele jadralec
+-- 1.izpiši vse podatke iz tabele jadralec
+select * from jadralec;
 
--- izpiši ime, startost in rating iz tabele jadralec
+-- 2.izpiši ime, startost in rating iz tabele jadralec
+select ime, starost, rating from jadralec;
 
--- izpiši samo unikatna (distinct) imena iz tabele coln
+-- 3.izpiši samo unikatna (distinct) imena iz tabele coln
+select distinct ime from coln;
 
--- pretvori dolžine colnov iz čevljev v metre
+-- 4.pretvori dolžine colnov iz čevljev v metre
+select ime, dolzina as ft, dolzina * 0.3 as m, barva from coln;
 
--- Izpis šifer in imen rdečih čolnov, ki so krajši od 40 čevljev
+-- 5.Izpis šifer in imen rdečih čolnov, ki so krajši od 40 čevljev
+select cid, ime from coln where barva = 'rdeca' and dolzina < 40;
 
--- Izpis vseh oktobrskih rezervacij v letu 2006
+-- 6.Izpis vseh oktobrskih rezervacij v letu 2006
+select * from rezervacija where dan between '2006-10-01' and '2006-11-01';
 
--- Izpis vseh rdečih in zelenih čolnov.
+-- 7.Izpis vseh rdečih in zelenih čolnov.
+select * from coln where barva = 'zelena' or barva = 'rdeca';
 
--- Izpis vseh jadralcev, katerih ime se začne s črko A
+-- 8.Izpis vseh jadralcev, katerih ime se začne s črko A
+select ime from jadralec where ime like 'A%';
 
--- Izpis vseh novembrskih rezervacij
+-- 9.Izpis vseh novembrskih rezervacij
+select * from rezervacija where month(dan)='11';
 
--- Izpis vseh jadralcev, ki še nimajo ratinga
+-- 10.Izpis vseh jadralcev, ki še nimajo ratinga
+select * from jadralec where rating is null;
 
--- Izpis vseh podatkov o jadralcih, urejeno po starosti od najmlajšega do
--- najstarejšega in pri enaki starosti nato še padajoče po ratingu (najprej
--- višji rating)
+-- 11.Izpis vseh podatkov o jadralcih, urejeno po starosti od najmlajšega do najstarejšega in pri enaki starosti nato še padajoče po ratingu (najprej višji rating)
+select * from jadralec order by starost asc, rating desc;
 
--- Izpis podatkov o rezervacijah zelenih čolnov
+-- 12.Izpis podatkov o rezervacijah zelenih čolnov
+select * 
+from jadralec j, coln c, rezervacija r
+where j.jid = r.jid and c.cid = r.cid and c.barva = 'zelena';
 
--- Izpis imen jadralcev, ki so rezervirali zelene čolne na dan 08.10.2006
+-- 13.Izpis imen jadralcev, ki so rezervirali zelene čolne na dan 08.10.2006
+select j.ime
+from jadralec j, coln c, rezervacija r
+where j.jid = r.jid and c.cid = r.cid and c.barva='zelena' and dan = '2006-10-08';
 
--- Imena in šifre čolnov, ki sta jih rezervirala Darko ali Lojze (UNIJA in brez unije, simulacija preseka in razlike)
+-- 14.Imena in šifre čolnov, ki sta jih rezervirala Darko ali Lojze (UNIJA in brez unije, simulacija preseka in razlike)
+-- unija
+select *
+from c.cid, c.ime
+where j.jid = r.jid and c.cid = r.cid and j.ime = 'Lojze'
+union
+select c.cid, c.ime
+from jadralec j, coln c, rezervacija r
+where j.jid = r.jid and c.cid = r.cid and j.ime = 'Darko';
 
--- Imena jadralcev, ki so rezervirali modre čolne (gnezdenje)
+-- brez unije
+select c.cid, c.ime
+from jadralec j, coln c, rezervacija r
+where j.jid = r.jid and c.cid = r.cid and (j.ime = 'Lojze' or j.ime = 'Darko');
 
--- Imena jadralcev, ki nikoli niso rezervirali nobenega rdečega čolna (gnezdenje)
+-- simulacija preseka 
+select c.cid
+from jadralec j, coln c, rezervacija r
+where j.jid = r.jid and c.cid = r.cid and j.ime = 'Lojze'
+and c.cid in (select c.cid
+from jadralec j, coln c, rezervacija r
+where j.jid = r.jid and c.cid = r.cid and j.ime = 'Darko');
 
--- Imena čolnov, ki so daljši od vsaj enega rdečega čolna
+-- simulacija razlike -> niso opravili nobene rezervacije
+select j.* 
+from jadralec j
+where j.jid not in (
+select r.jid
+from rezervacija r
+);
 
--- Imena čolnov, ki so daljši od vseh zelenih čolnov
+-- 15.Imena jadralcev, ki so rezervirali modre čolne (gnezdenje)
+select j.*
+from jadralec j
+where j.jid in (
+select jid
+from rezervacija r, coln c
+where c.cid = r.cid and c.barva='modra'
+);
 
--- Imena jadralcev, ki nikoli niso ničesar rezervirali
+-- 16.brez gnezdenja
+select * 
+from jadralec j, rezervacija r, coln c
+where j.jid = r.jid and c.cid = r.cid and c.barva = 'modra';
 
--- Koliko rezervacij je bilo opravljenih z zelenimi čolni?
+-- 17.Imena jadralcev, ki nikoli niso rezervirali nobenega rdečega čolna (gnezdenje)
+select *
+from jadralec j 
+where j.jid in (
+select jid
+from coln c, rezervacija r
+where c.cid = r.cid and c.barva != 'rdeča'
+);
 
--- Koliko različnih jadralcev je rezerviralo rdeče čolne?
+-- 18.brez gnezdenja
+select *
+from jadralec j, rezervacija r, coln c
+where  j.jid = r.jid and c.cid = r.cid and c.barva != 'rdeča';
 
--- Izpis povprečne, minimalne in maksimalne starosti jadralcev z ratingom 8 ali več.
+-- 19.Imena čolnov, ki so daljši od vsaj enega rdečega čolna
+select *
+from coln
+where dolzina > any(
+select dolzina
+from coln
+where barva = 'rdeča'
+);
 
--- Izpis števila jadralcev po ratinških skupinah
+-- 20.Imena čolnov, ki so daljši od vseh zelenih čolnov
 
--- Izpis povprečne starosti jadralcev, ki so rezervirali čolne, glede na ratinške skupine in dolžino čolnov.
 
--- Izpis povprečne starosti jadralcev starejših od 30 let po posameznih ratinških skupinah za ratinge višje od 5.
+-- 21.Imena jadralcev, ki nikoli niso ničesar rezervirali
 
--- Za vsak rating v tabeli jadralcev izpiši starost najmlajšega polnoletnega
--- jadralca s tem ratingom, vendar samo za tiste ratinge, ki jih imata vsaj
--- dva jadralca!
 
--- Vnos nove vrstice v tabelo rezervacija (brez imen stolpcev):
+-- 22.Koliko rezervacij je bilo opravljenih z zelenimi čolni?
 
--- V tabelo Jadralec dodamo novo vrstico
 
--- Predpostavimo, da imamo tabelo stariJadralec z enako shemo kot
--- tabela jadralec. Vanjo želimo vnesti šifre, imena in starost jadralcev,
--- starejših od 40 let.
+-- 23.Koliko različnih jadralcev je rezerviralo rdeče čolne?
 
--- Vsem starim jadralcem postavimo rating na 10.
 
--- Vsem starim jadralcem zmanjšaj rating za 10%
+-- 24.Izpis povprečne, minimalne in maksimalne starosti jadralcev z ratingom 8 ali več.
 
--- Izbriši vse rezervacije pred letom 2006.
 
--- Izbriši vse rezervacije zelenih čolnov pred letom 2006.
+-- 25.Izpis števila jadralcev po ratinških skupinah
+
+
+-- 26.Izpis povprečne starosti jadralcev, ki so rezervirali čolne, glede na ratinške skupine in dolžino čolnov.
+
+
+-- 27.Izpis povprečne starosti jadralcev starejših od 30 let po posameznih ratinških skupinah za ratinge višje od 5.
+
+
+-- 28.Za vsak rating v tabeli jadralcev izpiši starost najmlajšega polnoletnega jadralca s tem ratingom, vendar samo za tiste ratinge, ki jih imata vsaj dva jadralca!
+
+
