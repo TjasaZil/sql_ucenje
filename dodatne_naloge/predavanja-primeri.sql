@@ -174,29 +174,65 @@ where barva = 'rdeča'
 );
 
 -- 20.Imena čolnov, ki so daljši od vseh zelenih čolnov
-
+select c.ime
+from coln c
+where dolzina > all(
+select co.dolzina
+from coln co
+where co.barva = 'zelena'
+);
 
 -- 21.Imena jadralcev, ki nikoli niso ničesar rezervirali
-
+select j.ime
+from jadralec j
+left join rezervacija r on j.jid = r.jid
+where r.jid is null;
 
 -- 22.Koliko rezervacij je bilo opravljenih z zelenimi čolni?
-
+select count(c.barva) as stevilo_zelenih_rezervacij
+from coln c, rezervacija r
+where c.cid = r.cid and c.barva = 'zelena';
 
 -- 23.Koliko različnih jadralcev je rezerviralo rdeče čolne?
+select count(distinct j.ime) as stevilo_jadralcev, c.barva
+from coln c
+inner join rezervacija r on r.cid = c.cid
+inner join jadralec j on j.jid = r.jid
+group by c.barva
+having c.barva = 'rdeca';
 
+select count(distinct j.ime) as stevilo_jadralcev, c.barva
+from coln c, rezervacija r, jadralec j
+where j.jid = r.jid and c.cid = r.cid and c.barva = 'rdeca';
 
 -- 24.Izpis povprečne, minimalne in maksimalne starosti jadralcev z ratingom 8 ali več.
-
+select avg(starost) as avg_starost, min(starost) as min_starost, max(starost) as max_starost, rating
+from jadralec j
+group by rating
+having rating > 7;
 
 -- 25.Izpis števila jadralcev po ratinških skupinah
-
+select count(rating) as count_rating, rating
+from jadralec 
+group by rating;
 
 -- 26.Izpis povprečne starosti jadralcev, ki so rezervirali čolne, glede na ratinške skupine in dolžino čolnov.
-
+select avg(j.starost) as avg_starost,  j.rating, c.dolzina
+from jadralec j
+inner join rezervacija r on j.jid = r.jid
+inner join coln c on c.cid = r.cid
+group by j.rating, c.dolzina
+order by j.rating, c.dolzina;
 
 -- 27.Izpis povprečne starosti jadralcev starejših od 30 let po posameznih ratinških skupinah za ratinge višje od 5.
-
+select avg(starost) as povprecna_starost, rating
+from jadralec
+where rating > 5  and starost > 30
+group by rating;
 
 -- 28.Za vsak rating v tabeli jadralcev izpiši starost najmlajšega polnoletnega jadralca s tem ratingom, vendar samo za tiste ratinge, ki jih imata vsaj dva jadralca!
-
+select min(starost) as min_starost, rating, count(rating)
+from jadralec
+group by rating
+having count(rating)>1;
 
