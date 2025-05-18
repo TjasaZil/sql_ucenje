@@ -38,16 +38,29 @@ select * from student where ime = 'Tia' and priimek = 'Kolar' and leto_rojstva =
 
 -- vaje 2 -- movies, mpaa_ratings, genres, characters, actors
 -- Kako dolgo traja najdaljši film? Rezultat poimenujte 'trajanje najdaljšega filma'.
+select max(runtime) as trajanje_najdaljsega_filma from movies;
 
 -- Koliko v povprečju stane film? Rezultat poimenujte 'povprečen budget filma'.
+select avg(budget) as povprecen_budget_filma from movies;
 
 -- Koliko je vseh filmov? Rezultat poimenujte 'vseh filmov'.
+select count(*) as vseh_filmov from movies;
 
 -- Koliko je različnih žanrov?
+select count(*) as razlicnih_zanrov from genres;
 
 -- Koliko je akcijskih (Action) filmov?
+select count(g.name) as stevilo_akcijskih_filmov
+from movies m
+inner join genres g on m.genre_id = g.genre_id
+where g.name = 'Action'
+group by g.name;
 
 -- Kakšna je povprečna ocena (rating) grozljivk (Horror)?
+select avg(m.rating)
+from movies m
+inner join genres g on g.genre_id = m.genre_id
+where g.name = 'Horror';
 
 -- Kakšen je bil največji zaslužek (gross - budget)? Rezultat poimenujte 'zaslužek'.
 
@@ -68,6 +81,7 @@ select * from student where ime = 'Tia' and priimek = 'Kolar' and leto_rojstva =
 -- Koliko filmov je bilo posnetih leta 1990?
 
 -- Kateri (naslovi) filmi so bili izdani novembra ali decembra?
+
 
  -- passengers
  -- Izračunaj povprečno starost vseh potnikov.
