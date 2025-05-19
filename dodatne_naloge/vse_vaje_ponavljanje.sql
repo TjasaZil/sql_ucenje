@@ -35,7 +35,6 @@ select * from student where leto_rojstva = 1998 or leto_rojstva = 2000;
 -- Ali obstaja študentka Tia Kolar rojena 1999?
 select * from student where ime = 'Tia' and priimek = 'Kolar' and leto_rojstva = '1999';
 
-
 -- vaje 2 -- movies, mpaa_ratings, genres, characters, actors
 -- Kako dolgo traja najdaljši film? Rezultat poimenujte 'trajanje najdaljšega filma'.
 select max(runtime) as trajanje_najdaljsega_filma from movies;
@@ -63,25 +62,27 @@ inner join genres g on g.genre_id = m.genre_id
 where g.name = 'Horror';
 
 -- Kakšen je bil največji zaslužek (gross - budget)? Rezultat poimenujte 'zaslužek'.
+select max(gross-budget) as zasluzek from movies;
 
 -- Koliko filmov je primernih za vse generacije (G - rating)?
+select count(r.rating_value) 
+from movies m 
+inner join mpaa_ratings r on r.mpaa_rating_id = m.mpaa_rating_id
+where r.rating_value='G';
 
 -- Izpišite dolžino najdaljšega naslova akcijskih filmov.
-
--- Izpišite naslov, budget in trajanje vseh filmov pri čemer stolpcu budget dodajte znak '$' pred zneskom, stolpcu trajanje pa na konec dodajte ' min'.
-
--- Izpišite naslove in žanre vseh filmov, ki imajo rating 'PG-13' pri čemer namesto žanra Science Fiction izpišite 'SF'.
-
--- Izpišite naslov filma, združen z žanrom, npr. Look Who's Talking (Romance)
-
--- Izpišite naslov filma, združen z žanrom in letnico, npr. Look Who's Talking (1998) - Romance 
+select max(m.title)
+from movies m, genres g
+where m.genre_id = g.genre_id and g.name = 'Action';
 
 -- Kdaj je bil izdan najstarejši film?
+select min(release_date) from movies;
 
 -- Koliko filmov je bilo posnetih leta 1990?
+select count(*) from movies where release_date like'1990%';
 
 -- Kateri (naslovi) filmi so bili izdani novembra ali decembra?
-
+select title from movies where month(release_date)= '11' or month(release_date)='12';
 
  -- passengers
  -- Izračunaj povprečno starost vseh potnikov.
@@ -143,6 +144,7 @@ select max(fare) from passengers where pclass = 2 and sex = 'female';
 
 -- Izračunaj skupno število potnikov brez kabine, ki so bili starejši od 30 let in niso preživeli.
 select count(*) from passengers where survived = 0 and age > 30 and cabin = '';
+
 -- Koliko filmov je bilo izdanih v vsakem žanru po letu 2010?
 
 -- Koliko filmov je bilo izdanih v vsakem letu?
